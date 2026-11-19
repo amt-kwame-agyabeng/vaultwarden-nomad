@@ -1,0 +1,31 @@
+# Vaultwarden sensitive data
+backups/
+data/
+attachments/
+sends/
+db.sqlite3
+db.sqlite3-shm
+db.sqlite3-wal
+rsa_key*
+config.json
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Temporary and restore files
+*.bak
+*.backup
+*.dump
+*.tar
+*.tar.gz
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
