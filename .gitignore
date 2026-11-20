@@ -1,5 +1,7 @@
 # Vaultwarden sensitive data
-backups/
+# Keep backup directory structure but exclude actual backups
+backups/*
+!backups/.gitkeep
 data/
 attachments/
 sends/
@@ -8,6 +10,9 @@ db.sqlite3-shm
 db.sqlite3-wal
 rsa_key*
 config.json
+
+
+
 
 # Secrets and environment files
 .env
