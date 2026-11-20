@@ -13,22 +13,22 @@ The deployment uses a Nomad development agent for the lab environment and a Dock
 The application follows this request flow:
 
 ```text
-User Browser
-     |
-     | HTTPS
-     v
-Nginx Reverse Proxy
-     |
-     | HTTP - localhost:8080
-     v
-Vaultwarden Container
-     |
-     v
-Persistent Host Volume
-/opt/vaultwarden/data
-     |
-     v
-SQLite Database and Vault Files
+User Browser / Bitwarden Client
+             |
+             | HTTPS
+             v
+      Nginx Reverse Proxy
+             |
+             | HTTP - localhost:8080
+             v
+      Vaultwarden Container
+             |
+             v
+      Persistent Host Volume
+      /opt/vaultwarden/data
+             |
+             v
+      SQLite Database and Vault Files
 ```
 
 Nomad manages the Vaultwarden workload, while Consul is used as part of the lab environment.
@@ -96,7 +96,7 @@ However, distributing modified versions or making modified software available to
 
 Review the official license before redistributing or offering a modified version as a service.
 
-Official license: https://www.gnu.org/licenses/agpl-3.0.html
+Official license: [GNU AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 
 For further technical and licensing references, see [References](docs/references.md).
 
@@ -138,7 +138,7 @@ Actual backup archives, application databases, private keys, and secrets are exc
 
 ## Deployment
 
-### 1. Start the infrastructure
+### 1. Start the Infrastructure
 
 Start Docker Desktop and ensure its WSL integration is enabled.
 
@@ -156,7 +156,7 @@ Verify Consul:
 consul members
 ```
 
-### 2. Configure persistent storage
+### 2. Configure Persistent Storage
 
 Create the Vaultwarden data directory:
 
@@ -177,7 +177,7 @@ client {
 
 The persistent directory ensures application data remains available when the container is restarted or replaced.
 
-### 3. Configure secrets
+### 3. Configure Secrets
 
 The Vaultwarden admin token is stored as a Nomad Variable under:
 
@@ -207,7 +207,7 @@ Inspect the allocation:
 nomad alloc status <allocation-id>
 ```
 
-### 5. Configure HTTPS access
+### 5. Configure HTTPS Access
 
 Nginx acts as the reverse proxy and forwards HTTPS requests to Vaultwarden on the local application port.
 
@@ -219,7 +219,7 @@ A locally trusted certificate is generated using mkcert. The certificate and pri
 
 The Nginx configuration template is maintained in `nginx/vaultwarden.conf`.
 
-### 6. Verify the application
+### 6. Verify the Application
 
 Check the Vaultwarden health endpoint:
 
@@ -289,10 +289,13 @@ See [Backup and Recovery Documentation](docs/backup-restore.md).
 | Backup restoration | Successful |
 | Recovered test account authentication | Successful |
 | Recovered vault entry | Verified |
+| Vaultwarden web vault login | Successful |
+| Official Bitwarden desktop client login | Successful |
+| Access to existing vault credentials through Bitwarden client | Verified |
 
 ## Screenshots and Implementation Evidence
 
-The following screenshots document the implementation from initial research through backup restoration.
+The following screenshots document the implementation from initial research through deployment, testing, backup restoration, and Bitwarden client compatibility.
 
 ### 1. Project Research and Preparation
 
@@ -346,13 +349,19 @@ The following screenshots document the implementation from initial research thro
 
 ![Vaultwarden admin page disabled](docs/screenshots/adminpage%20disabled.png)
 
-*Admin page access restriction evidence.*
+*Evidence of restricted access to the administrative page.*
 
 ### 4. Backup and Recovery
 
 ![Vaultwarden backup restore success](docs/screenshots/12-vaultwarden-backup-restore-success.png)
 
 *Successful login to the restored instance with the previously backed-up vault entry.*
+
+### 5. Bitwarden Client Compatibility
+
+![Official Bitwarden desktop client connected to Vaultwarden](docs/screenshots/13-bitwarden-desktop-client-login.png)
+
+*Successfully connected the official Bitwarden desktop application to the self-hosted Vaultwarden server over HTTPS. Logged in using the existing Vaultwarden account and verified access to previously saved demo credentials, confirming compatibility with the official Bitwarden client.*
 
 ## Documentation
 
@@ -365,7 +374,7 @@ Additional project documentation:
 
 ## Repository
 
-GitHub: https://github.com/amt-kwame-agyabeng/vaultwarden-nomad
+GitHub: [Vaultwarden Deployment on Nomad](https://github.com/amt-kwame-agyabeng/vaultwarden-nomad)
 
 ## Future Improvements
 
