@@ -49,6 +49,57 @@ Nomad manages the Vaultwarden workload, while Consul is used as part of the lab 
 | Git and GitHub | Version control and project hosting |
 | WSL2 / Ubuntu 24.04 | Linux development environment |
 
+## Database Selection and Data Storage
+
+### Database Choice: SQLite
+
+This deployment uses SQLite as Vaultwarden's database backend.
+
+SQLite was selected because this is a standalone lab deployment running a single Vaultwarden instance. It provides a lightweight, file-based database without requiring a separate database server, reducing infrastructure complexity and operational overhead.
+
+Vaultwarden stores application and user-related data in its SQLite database, while supporting files such as the RSA private key and other application data are also maintained in its persistent data directory.
+
+The database and associated application files are stored under:
+
+`/opt/vaultwarden/data`
+
+Persistent storage is configured through a Nomad host volume to ensure that application data survives container restarts and replacements.
+
+### Backup Requirements
+
+The following items must be included in a complete backup:
+
+- SQLite database (`db.sqlite3`).
+- RSA private key (`rsa_key.pem`).
+- Attachments, Sends and other relevant application data directories, when present.
+- Application configuration files, where applicable.
+
+The backup script uses SQLite's online backup mechanism to create a consistent database copy.
+
+### Admin Token and Secrets
+
+The Vaultwarden admin token protects access to the administrative interface, where privileged server settings and administrative operations can be managed.
+
+The token is stored as a Nomad Variable under `vaultwarden/admin` and injected into the workload through a Nomad template.
+
+The token must never be committed to the Git repository or exposed in application logs.
+
+This deployment uses SQLite, so there is no separate database server password to manage.
+
+## License and Internal Use
+
+Vaultwarden is distributed under the GNU Affero General Public License version 3.0 (AGPL-3.0).
+
+The license permits internal use, including running a self-hosted instance within an organisation. Internal use alone does not generally require publishing the source code.
+
+However, distributing modified versions or making modified software available to users over a network can trigger source-code availability obligations under the AGPL-3.0.
+
+Review the official license before redistributing or offering a modified version as a service.
+
+Official license: https://www.gnu.org/licenses/agpl-3.0.html
+
+For further technical and licensing references, see [References](docs/references.md).
+
 ## Project Structure
 
 ```text
@@ -64,7 +115,8 @@ vaultwarden-nomad/
 │   ├── security.md
 │   └── screenshots/
 ├── nginx/
-│   └── vaultwarden.conf
+│   ├── vaultwarden.conf
+│   └── vaultwarden-restore.conf
 ├── nomad/
 │   └── vaultwarden.nomad
 └── scripts/

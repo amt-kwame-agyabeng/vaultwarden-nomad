@@ -155,6 +155,19 @@ The following security measures are applied:
 - Restore operations must use a separate data directory when testing recovery.
 - Live application data must not be overwritten during restore testing.
 
+
+### Secrets Recovery
+
+The Vaultwarden admin token is stored separately from the application data in a Nomad Variable at `vaultwarden/admin`. It is not included in the application backup archive.
+
+When rebuilding the Nomad environment, preserve or securely recreate this Nomad Variable and ensure the Vaultwarden task can access it. Never store the raw token in this documentation, Git, or the backup archive.
+
+### Backup Encryption and Protection
+
+Backup archives are protected with restrictive filesystem permissions (`600`). This limits access to the files but does not encrypt their contents.
+
+Before transferring backups to another machine or cloud storage, encrypt them using an appropriate encryption method. Keep encryption keys separate from the backup archives.
+
 ## 10. Implementation Status
 
 The backup and recovery implementation has been completed and tested.
